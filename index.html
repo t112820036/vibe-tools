@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>準度訓練 - CYBERAIM METALLIC</title>
+
+  <!-- 引入科技風格 Google 字型 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================
+       1. 基礎重置與金屬科技主題 (Theme & Base)
+       ========================================== */
+    :root {
+      --bg-dark: #0a0c10;
+      --panel-bg: linear-gradient(135deg, #1f2430 0%, #11141c 100%);
+      --metal-border: linear-gradient(135deg, #58667a 0%, #1c222d 50%, #899cb3 100%);
+      --cyan-glow: #00f3ff;
+      --red-laser: #ff0055;
+      --gold-accent: #ffb700;
+      --text-main: #e2e8f0;
+      --text-dim: #64748b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(circle at 50% 50%, #1a2230 0%, #080a0e 100%),
+        repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 243, 255, 0.02) 2px, rgba(0, 243, 255, 0.02) 4px);
+      color: var(--text-main);
+      font-family: 'Rajdhani', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    /* 科技高光金屬面板容器 */
+    .cyber-panel {
+      background: var(--panel-bg);
+      border: 2px solid transparent;
+      border-image: var(--metal-border) 1;
+      box-shadow: 
+        0 10px 30px rgba(0, 0, 0, 0.8),
+        inset 0 0 15px rgba(255, 255, 255, 0.05),
+        0 0 15px rgba(0, 243, 255, 0.15);
+      border-radius: 8px;
+      position: relative;
+    }
+
+    .cyber-panel::before {
+      content: '';
+      position: absolute;
+      top: -2px; left: -2px; right: -2px; bottom: -2px;
+      background: linear-gradient(45deg, var(--cyan-glow), transparent, var(--red-laser));
+      z-index: -1;
+      border-radius: 10px;
+      opacity: 0.3;
+    }
+
+    /* ==========================================
+       2. 第一頁：大廳與選單 (Page 1 - Lobby)
+       ========================================== */
+    #page-lobby {
+      width: 90%;
+      max-width: 650px;
+      padding: 40px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+      z-index: 10;
+    }
+
+    .main-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2.8rem;
+      font-weight: 900;
+      letter-spacing: 4px;
+      background: linear-gradient(180deg, #ffffff 0%, #94a3b8 50%, #334155 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 20px rgba(0, 243, 255, 0.4);
+      position: relative;
+    }
+
+    .sub-title {
+      font-size: 1rem;
+      color: var(--cyan-glow);
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      margin-top: -15px;
+    }
+
+    /* 儀表數據板 */
+    .stats-board {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin: 10px 0;
+    }
+
+    .stat-card {
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(0, 243, 255, 0.2);
+      padding: 15px 10px;
+      border-radius: 6px;
+      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .stat-card .label {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      letter-spacing: 1px;
+    }
+
+    .stat-card .value {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.5rem;
+      color: var(--cyan-glow);
+      margin-top: 5px;
+      font-weight: 700;
+    }
+
+    /* 金屬按鈕 */
+    .btn-cyber {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      padding: 16px 32px;
+      color: #fff;
+      background: linear-gradient(135deg, #005580 0%, #002b40 100%);
+      border: 1px solid var(--cyan-glow);
+      border-radius: 4px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.2s ease;
+      box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
+    }
+
+    .btn-cyber:hover {
+      background: linear-gradient(135deg, #0088cc 0%, #004466 100%);
+      box-shadow: 0 0 25px rgba(0, 243, 255, 0.7);
+      transform: translateY(-2px);
+    }
+
+    .btn-cyber:active {
+      transform: translateY(1px);
+    }
+
+    /* 音效控制開關 */
+    .sound-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-size: 0.9rem;
+      color: var(--text-dim);
+      cursor: pointer;
+    }
+
+    .sound-toggle input {
+      accent-color: var(--cyan-glow);
+      cursor: pointer;
+    }
+
+    /* ==========================================
+       3. 第二頁：訓練場與 HUD (Page 2 - Game Arena)
+       ========================================== */
+    #page-game {
+      display: none;
+      flex-direction: column;
+      width: 95vw;
+      max-width: 1000px;
+      height: 90vh;
+      max-height: 700px;
+      gap: 15px;
+    }
+
+    /* 頂部 HUD 計分列 */
+    .hud-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 25px;
+      background: rgba(10, 12, 16, 0.85);
+      border: 1px solid rgba(0, 243, 255, 0.3);
+      border-radius: 6px;
+    }
+
+    .hud-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .hud-title {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      letter-spacing: 2px;
+    }
+
+    .hud-value {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--cyan-glow);
+    }
+
+    .hud-value.timer {
+      color: var(--red-laser);
+      text-shadow: 0 0 10px rgba(255, 0, 85, 0.5);
+    }
+
+    /* 訓練主區域 (Rectangle Arena) */
+    .arena-box {
+      flex: 1;
+      position: relative;
+      background: 
+        linear-gradient(rgba(15, 23, 42, 0.9), rgba(8, 10, 14, 0.95)),
+        repeating-linear-gradient(0deg, transparent, transparent 19px, rgba(255, 255, 255, 0.03) 20px),
+        repeating-linear-gradient(90deg, transparent, transparent 19px, rgba(255, 255, 255, 0.03) 20px);
+      border: 2px solid #334155;
+      box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.9);
+      border-radius: 6px;
+      overflow: hidden;
+      cursor: crosshair;
+    }
+
+    /* 2mm 半徑 (直徑 4mm ≈ 15px) 金屬雷射圓靶 */
+    .target-circle {
+      position: absolute;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #ffffff 0%, var(--red-laser) 60%, #80002a 100%);
+      box-shadow: 
+        0 0 10px var(--red-laser),
+        0 0 20px var(--red-laser);
+      border: 1px solid #ffffff;
+      transform: translate(-50%, -50%);
+      cursor: pointer;
+      z-index: 5;
+    }
+
+    /* Canvas 擊中火花效果層 */
+    #particle-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 4;
+    }
+
+    /* ==========================================
+       4. 結算對話框 (Result Modal)
+       ========================================== */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(5px);
+      z-index: 100;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      width: 90%;
+      max-width: 480px;
+      padding: 35px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes modalPop {
+      0% { transform: scale(0.8); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .rank-display {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 4rem;
+      font-weight: 900;
+      color: var(--gold-accent);
+      text-shadow: 0 0 20px rgba(255, 183, 0, 0.6);
+      margin: -10px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==========================================
+       1. 第一頁：準度訓練選單大廳
+       ========================================== -->
+  <div id="page-lobby" class="cyber-panel">
+    <h1 class="main-title">準度訓練</h1>
+    <div class="sub-title">CYBERAIM PRECISION TRAINER</div>
+
+    <p style="color: var(--text-dim); font-size: 0.95rem;">
+      訓練時間：<span style="color: var(--cyan-glow);">60 秒</span> | 標靶規格：<span style="color: var(--red-laser);">2mm 半徑極小標靶</span>
+    </p>
+
+    <!-- 歷史最高紀錄卡片 -->
+    <div class="stats-board">
+      <div class="stat-card">
+        <div class="label">最高擊中數</div>
+        <div id="best-hits" class="value">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">最高命中率</div>
+        <div id="best-accuracy" class="value">0%</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">最快反應</div>
+        <div id="best-reaction" class="value">0ms</div>
+      </div>
+    </div>
+
+    <!-- 音效切換開關 -->
+    <label class="sound-toggle">
+      <input type="checkbox" id="sound-checkbox" checked>
+      開啟高科技 Web Audio 音效與打擊回饋
+    </label>
+
+    <!-- 開始訓練按鈕 -->
+    <button id="btn-start" class="btn-cyber">開始訓練 INITIATE</button>
+  </div>
+
+
+  <!-- ==========================================
+       2. 第二頁：訓練戰鬥場 (60秒戰鬥)
+       ========================================== -->
+  <div id="page-game">
+    <!-- 頂部 HUD 計分資訊列 -->
+    <div class="hud-bar">
+      <div class="hud-item">
+        <div class="hud-title">剩餘時間 TIME</div>
+        <div id="hud-timer" class="hud-value timer">60.0</div>
+      </div>
+      <div class="hud-item">
+        <div class="hud-title">擊中數 HITS</div>
+        <div id="hud-hits" class="hud-value">0</div>
+      </div>
+      <div class="hud-item">
+        <div class="hud-title">命中率 ACCURACY</div>
+        <div id="hud-accuracy" class="hud-value">100%</div>
+      </div>
+      <div class="hud-item">
+        <div class="hud-title">平均反應 REACTION</div>
+        <div id="hud-reaction" class="hud-value">0ms</div>
+      </div>
+    </div>
+
+    <!-- 長方形射擊範圍區域 -->
+    <div id="arena" class="arena-box">
+      <!-- 火花效果 Canvas -->
+      <canvas id="particle-canvas"></canvas>
+      <!-- 2mm 半徑圓靶由 JS 動態生成於此 -->
+    </div>
+  </div>
+
+
+  <!-- ==========================================
+       3. 60秒結算對話視窗 Modal
+       ========================================== -->
+  <div id="result-modal" class="modal-overlay">
+    <div class="cyber-panel modal-content">
+      <h2 style="font-family: 'Orbitron'; color: var(--cyan-glow);">訓練評估報告</h2>
+      
+      <div>
+        <div style="font-size: 0.9rem; color: var(--text-dim);">最終綜合評估等級</div>
+        <div id="result-rank" class="rank-display">S</div>
+      </div>
+
+      <div class="stats-board">
+        <div class="stat-card">
+          <div class="label">擊中數</div>
+          <div id="res-hits" class="value">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">命中率</div>
+          <div id="res-accuracy" class="value">0%</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">平均反應</div>
+          <div id="res-reaction" class="value">0ms</div>
+        </div>
+      </div>
+
+      <button id="btn-return" class="btn-cyber">返回主頁 RETURN</button>
+    </div>
+  </div>
+
+
+  <!-- ==========================================
+       4. 遊戲核心邏輯 (JavaScript)
+       ========================================== -->
+  <script>
+    /* --------------------------------------------------
+       A. Web Audio API 音效合成器 (無外部檔案依賴)
+       -------------------------------------------------- */
+    class SoundEngine {
+      constructor() {
+        this.ctx = null;
+      }
+
+      init() {
+        if (!this.ctx) {
+          this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+      }
+
+      playHitSound() {
+        if (!document.getElementById('sound-checkbox').checked) return;
+        this.init();
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(1200, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(300, this.ctx.currentTime + 0.08);
+
+        gain.gain.setValueAtTime(0.3, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.08);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.08);
+      }
+
+      playMissSound() {
+        if (!document.getElementById('sound-checkbox').checked) return;
+        this.init();
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(150, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(60, this.ctx.currentTime + 0.1);
+
+        gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.1);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.1);
+      }
+
+      playGameOverSound() {
+        if (!document.getElementById('sound-checkbox').checked) return;
+        this.init();
+        const now = this.ctx.currentTime;
+        [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+          gain.gain.setValueAtTime(0.2, now + idx * 0.08);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.08 + 0.2);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now + idx * 0.08);
+          osc.stop(now + idx * 0.08 + 0.2);
+        });
+      }
+    }
+
+    const sounds = new SoundEngine();
+
+    /* --------------------------------------------------
+       B. 全域變數與 DOM 元素
+       -------------------------------------------------- */
+    const pageLobby = document.getElementById('page-lobby');
+    const pageGame = document.getElementById('page-game');
+    const resultModal = document.getElementById('result-modal');
+    const arena = document.getElementById('arena');
+    const particleCanvas = document.getElementById('particle-canvas');
+    const ctx = particleCanvas.getContext('2d');
+
+    // Buttons
+    const btnStart = document.getElementById('btn-start');
+    const btnReturn = document.getElementById('btn-return');
+
+    // HUD Elements
+    const hudTimer = document.getElementById('hud-timer');
+    const hudHits = document.getElementById('hud-hits');
+    const hudAccuracy = document.getElementById('hud-accuracy');
+    const hudReaction = document.getElementById('hud-reaction');
+
+    // Stats
+    let timer = 60.0;
+    let timerInterval = null;
+    let hits = 0;
+    let totalShots = 0;
+    let reactionTimes = [];
+    let lastTargetSpawnTime = 0;
+    let currentTargetEl = null;
+    let particles = [];
+
+    /* --------------------------------------------------
+       C. 粒子系統 (Hit Spark Particles)
+       -------------------------------------------------- */
+    function resizeCanvas() {
+      particleCanvas.width = arena.clientWidth;
+      particleCanvas.height = arena.clientHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+
+    function createSparks(x, y) {
+      for (let i = 0; i < 12; i++) {
+        particles.push({
+          x: x,
+          y: y,
+          vx: (Math.random() - 0.5) * 8,
+          vy: (Math.random() - 0.5) * 8,
+          radius: Math.random() * 2.5 + 1,
+          alpha: 1,
+          color: Math.random() > 0.5 ? '#00f3ff' : '#ff0055'
+        });
+      }
+    }
+
+    function renderParticles() {
+      ctx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
+      for (let i = particles.length - 1; i >= 0; i--) {
+        let p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.alpha -= 0.03;
+        if (p.alpha <= 0) {
+          particles.splice(i, 1);
+          continue;
+        }
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = p.alpha;
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+      if (pageGame.style.display === 'flex') {
+        requestAnimationFrame(renderParticles);
+      }
+    }
+
+    /* --------------------------------------------------
+       D. 遊戲核心邏輯 (Game Logic)
+       -------------------------------------------------- */
+    // 載入 localStorage 最高紀錄
+    function loadBestStats() {
+      document.getElementById('best-hits').textContent = localStorage.getItem('cyberaim_best_hits') || '0';
+      document.getElementById('best-accuracy').textContent = (localStorage.getItem('cyberaim_best_acc') || '0') + '%';
+      document.getElementById('best-reaction').textContent = (localStorage.getItem('cyberaim_best_react') || '0') + 'ms';
+    }
+
+    // 開始 60 秒遊戲
+    function startGame() {
+      pageLobby.style.display = 'none';
+      pageGame.style.display = 'flex';
+      resultModal.style.display = 'none';
+
+      // 初始化變數
+      timer = 60.0;
+      hits = 0;
+      totalShots = 0;
+      reactionTimes = [];
+      particles = [];
+
+      updateHUD();
+      resizeCanvas();
+      requestAnimationFrame(renderParticles);
+
+      // 倒數計時器 (60秒)
+      const startTime = Date.now();
+      timerInterval = setInterval(() => {
+        const elapsed = (Date.now() - startTime) / 1000;
+        timer = Math.max(0, 60.0 - elapsed);
+        hudTimer.textContent = timer.toFixed(1);
+
+        if (timer <= 0) {
+          endGame();
+        }
+      }, 50);
+
+      spawnTarget();
+    }
+
+    // 在長方形訓練範圍內隨機生成 2mm 半徑 (直徑15px) 圓靶
+    function spawnTarget() {
+      if (currentTargetEl) {
+        currentTargetEl.remove();
+      }
+
+      const targetSize = 15; // 4mm 直徑標準 15px 圓形
+      const arenaW = arena.clientWidth;
+      const arenaH = arena.clientHeight;
+
+      // 隨機計算 (X, Y) 邊界座標
+      const randomX = Math.floor(Math.random() * (arenaW - targetSize - 20)) + 10 + targetSize / 2;
+      const randomY = Math.floor(Math.random() * (arenaH - targetSize - 20)) + 10 + targetSize / 2;
+
+      const target = document.createElement('div');
+      target.className = 'target-circle';
+      target.style.left = `${randomX}px`;
+      target.style.top = `${randomY}px`;
+
+      // 點擊圓靶事件 (擊中)
+      target.addEventListener('mousedown', (e) => {
+        e.stopPropagation(); // 阻止觸發脫靶事件
+        const now = Date.now();
+        const reaction = now - lastTargetSpawnTime;
+        reactionTimes.push(reaction);
+
+        hits++;
+        totalShots++;
+        sounds.playHitSound();
+
+        // 產生擊中火花
+        const rect = arena.getBoundingClientRect();
+        createSparks(e.clientX - rect.left, e.clientY - rect.top);
+
+        updateHUD();
+        spawnTarget(); // 銷毀並於新位置生成
+      });
+
+      arena.appendChild(target);
+      currentTargetEl = target;
+      lastTargetSpawnTime = Date.now();
+    }
+
+    // 點擊長方形範圍內 (脫靶判定)
+    arena.addEventListener('mousedown', () => {
+      totalShots++;
+      sounds.playMissSound();
+      updateHUD();
+    });
+
+    // 即時更新 HUD 數據
+    function updateHUD() {
+      hudHits.textContent = hits;
+      const acc = totalShots > 0 ? Math.round((hits / totalShots) * 100) : 100;
+      hudAccuracy.textContent = `${acc}%`;
+
+      const avgReact = reactionTimes.length > 0 
+        ? Math.round(reactionTimes.reduce((a, b) => a + b, 0) / reactionTimes.length) 
+        : 0;
+      hudReaction.textContent = `${avgReact}ms`;
+    }
+
+    // 結束遊戲與評分
+    function endGame() {
+      clearInterval(timerInterval);
+      if (currentTargetEl) currentTargetEl.remove();
+
+      sounds.playGameOverSound();
+
+      const finalAcc = totalShots > 0 ? Math.round((hits / totalShots) * 100) : 0;
+      const avgReact = reactionTimes.length > 0 
+        ? Math.round(reactionTimes.reduce((a, b) => a + b, 0) / reactionTimes.length) 
+        : 0;
+
+      // 計算等級 Rank
+      let rank = 'C';
+      if (finalAcc >= 90 && hits >= 80) rank = 'S';
+      else if (finalAcc >= 80 && hits >= 60) rank = 'A';
+      else if (finalAcc >= 70 && hits >= 40) rank = 'B';
+
+      // 顯示結算
+      document.getElementById('result-rank').textContent = rank;
+      document.getElementById('res-hits').textContent = hits;
+      document.getElementById('res-accuracy').textContent = `${finalAcc}%`;
+      document.getElementById('res-reaction').textContent = `${avgReact}ms`;
+
+      // 更新紀錄
+      const prevBestHits = parseInt(localStorage.getItem('cyberaim_best_hits') || '0');
+      if (hits > prevBestHits) localStorage.setItem('cyberaim_best_hits', hits);
+
+      const prevBestAcc = parseInt(localStorage.getItem('cyberaim_best_acc') || '0');
+      if (finalAcc > prevBestAcc) localStorage.setItem('cyberaim_best_acc', finalAcc);
+
+      const prevBestReact = parseInt(localStorage.getItem('cyberaim_best_react') || '9999');
+      if (avgReact > 0 && avgReact < prevBestReact) localStorage.setItem('cyberaim_best_react', avgReact);
+
+      resultModal.style.display = 'flex';
+    }
+
+    // 返回第一頁
+    function returnToLobby() {
+      resultModal.style.display = 'none';
+      pageGame.style.display = 'none';
+      pageLobby.style.display = 'flex';
+      loadBestStats();
+    }
+
+    /* --------------------------------------------------
+       E. 事件監聽設定
+       -------------------------------------------------- */
+    btnStart.addEventListener('click', () => {
+      sounds.init();
+      startGame();
+    });
+
+    btnReturn.addEventListener('click', returnToLobby);
+
+    // 初始載入
+    loadBestStats();
+  </script>
+</body>
+</html>
