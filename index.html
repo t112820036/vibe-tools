@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>準度訓練 - CyberAim Metallic</title>
+  <title>瞄準訓練 - CyberAim Metallic</title>
   <!-- Google Fonts: 科技字型 Orbitron & Rajdhani -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -274,12 +274,11 @@
       position: relative;
       overflow: hidden;
 
-      /* ⚡ 強制訓練區及其內部所有元素保持科技十字準心 ⚡ */
+      /* 強制訓練區及其內部所有元素保持科技十字準心 */
       cursor: crosshair !important;
     }
 
     .metal-arena * {
-      /* 強制確保 hover 在標靶、粒子或波紋上時都不會恢復為預設指標 */
       cursor: crosshair !important;
     }
 
@@ -310,7 +309,6 @@
         0 0 20px var(--laser-red);
       position: absolute;
       z-index: 10;
-      /* 確保圓點上懸停絕不改變游標 */
       cursor: crosshair !important;
     }
 
@@ -422,7 +420,8 @@
       <div class="tech-corner bottom-right"></div>
 
       <div class="title-container">
-        <h1 class="metal-title" data-text="準度訓練">準度訓練</h1>
+        <!-- 修改後的標題：瞄準訓練 -->
+        <h1 class="metal-title" data-text="瞄準訓練">瞄準訓練</h1>
         <p class="subtitle">CYBERAIM PRECISION TRAINER v2.0</p>
       </div>
 
@@ -465,7 +464,8 @@
     <header class="hud-header">
       <div class="hud-item highlight">
         <span class="hud-label">剩餘時間</span>
-        <span id="hud-timer" class="hud-value timer-glow">60.0s</span>
+        <!-- 修改初始時間為 30.0s -->
+        <span id="hud-timer" class="hud-value timer-glow">30.0s</span>
       </div>
       <div class="hud-item">
         <span class="hud-label">擊中數量</span>
@@ -557,10 +557,10 @@
       const summaryReact = document.getElementById('summary-reaction');
       const summaryGrade = document.getElementById('summary-grade');
 
-      // 遊戲狀態變數
+      // 遊戲狀態變數 (訓練時間調整為 30.0s)
       let totalShots = 0;
       let hits = 0;
-      let timeLeft = 60.0;
+      let timeLeft = 30.0;
       let timerInterval = null;
       let isGameActive = false;
       let targetSpawnTime = 0;
@@ -581,7 +581,6 @@
         const now = audioCtx.currentTime;
 
         if (type === 'hit') {
-          // 擊中音效：高頻清脆雷射聲
           osc.type = 'sine';
           osc.frequency.setValueAtTime(800, now);
           osc.frequency.exponentialRampToValueAtTime(200, now + 0.08);
@@ -590,7 +589,6 @@
           osc.start(now);
           osc.stop(now + 0.08);
         } else if (type === 'miss') {
-          // 脫靶音效：低沉挫折音
           osc.type = 'sawtooth';
           osc.frequency.setValueAtTime(150, now);
           osc.frequency.linearRampToValueAtTime(80, now + 0.1);
@@ -599,7 +597,6 @@
           osc.start(now);
           osc.stop(now + 0.1);
         } else if (type === 'finish') {
-          // 完成音效：三連音提示
           [523.25, 659.25, 783.99].forEach((freq, idx) => {
             const o = audioCtx.createOscillator();
             const g = audioCtx.createGain();
@@ -630,7 +627,6 @@
         const arenaRect = arena.getBoundingClientRect();
         const targetSize = 15; // 2mm 半徑 ≈ 15px 直徑
 
-        // 限制在長方形區域內
         const maxX = arenaRect.width - targetSize;
         const maxY = arenaRect.height - targetSize;
 
@@ -688,27 +684,27 @@
         }
       }
 
-      // 開始訓練遊戲
+      // 開始訓練遊戲 (以 30 秒為基準)
       function startGame() {
         totalShots = 0;
         hits = 0;
-        timeLeft = 60.0;
+        timeLeft = 30.0;
         reactionTimes = [];
         isGameActive = true;
 
         updateHUD();
-        hudTimer.textContent = '60.0s';
+        hudTimer.textContent = '30.0s';
 
         pageLanding.classList.remove('active');
         pageTraining.classList.add('active');
 
         spawnTarget();
 
-        // 60秒倒數計時器
+        // 30秒倒數計時器
         const startTime = performance.now();
         timerInterval = setInterval(() => {
           const elapsed = (performance.now() - startTime) / 1000;
-          timeLeft = Math.max(0, 60.0 - elapsed);
+          timeLeft = Math.max(0, 30.0 - elapsed);
           hudTimer.textContent = `${timeLeft.toFixed(1)}s`;
 
           if (timeLeft <= 0) {
@@ -725,7 +721,6 @@
 
         playSound('finish');
 
-        // 計算總結
         const acc = totalShots > 0 ? ((hits / totalShots) * 100).toFixed(1) : '0.0';
         const avgReact = reactionTimes.length > 0
           ? Math.round(reactionTimes.reduce((a, b) => a + b, 0) / reactionTimes.length)
@@ -736,12 +731,12 @@
         summaryAcc.textContent = `${acc}%`;
         summaryReact.textContent = `${avgReact}ms`;
 
-        // 評級判定
+        // 依 30 秒難度調整評級門檻
         let grade = 'C';
         const accNum = parseFloat(acc);
-        if (accNum >= 90 && hits >= 80) grade = 'S';
-        else if (accNum >= 80 && hits >= 60) grade = 'A';
-        else if (accNum >= 70 && hits >= 40) grade = 'B';
+        if (accNum >= 90 && hits >= 40) grade = 'S';
+        else if (accNum >= 80 && hits >= 30) grade = 'A';
+        else if (accNum >= 70 && hits >= 20) grade = 'B';
         summaryGrade.textContent = grade;
 
         // 儲存最佳紀錄
@@ -758,7 +753,7 @@
       // 點擊事件：標靶擊中
       target.addEventListener('mousedown', (e) => {
         if (!isGameActive) return;
-        e.stopPropagation(); // 阻止冒泡到 arena 觸發脫靶
+        e.stopPropagation();
 
         const hitTime = performance.now();
         reactionTimes.push(hitTime - targetSpawnTime);
